@@ -1,5 +1,5 @@
-# Burp-JVM-Property-Editor
-Small Burp Suite Extension that allows users to view, add, modify or remove JVM System Properties (https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html) during runtime. May be helpful for the purpose of viewing preset property values or setting options for other extensions during runtime rather than on the command line. Can be used with both the Free and Professional versions of Burp Suite.
+# Burp JVM Property Editor
+Small Burp Suite (Free or Professional) Extension to allow the user to view, add, modify, delete or copy the value of JVM System Properties (https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html) during Burp usage. May be helpful to some for the purpose of viewing preset property values or setting options for other extensions during runtime rather than on the command line.
 
 # Usage
 1. Load the burp-jvm-property-editor-[VERSION].jar file in the Burp Suite "Extensions" tab.
@@ -13,10 +13,11 @@ Small Burp Suite Extension that allows users to view, add, modify or remove JVM 
   1. Double click the cell in the "Property Value" column and type the new value for the property.
   2. To commit the changed value to the JVM press enter. To cancel, press esc.
   3. If the current installed SecurityManager allows the user to edit the selected property, the property value will be changed. Otherwise an error message will be printed below the "Add Property" button.
-5. To remove an existing property:
-  1. Select the property that will be deleted and press the "Delete Property" button.
-  2. A confirm prompt will appear: select "Yes" to delete the property and "No" to cancel.
+5. To remove an existing property (or properties):
+  1. Select the property (or properties) that will be deleted and press the "Delete Selected Property" button.
+  2. A confirm prompt will appear (for each selected property): select "Yes" to delete the property and "No" to cancel.
   3. If "Yes" was clicked and the current installed SecurityManager allows the user to remove the selected property, the property value will be changed. Otherwise an error message will be printed below the "Add Property" button.
+6. To copy the value of an existing property, select the property from the list and click "Copy Selected Property Value". The value of the property will be copied to the clipboard and a message will be printed below the "Add Property" button confirming this.
 
 # Building
 Requires Java Development Kit 7 or higher and Burp Suite jar file (Free or Professional)

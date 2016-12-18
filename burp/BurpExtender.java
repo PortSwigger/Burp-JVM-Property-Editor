@@ -1,11 +1,10 @@
 /*
 	BurpExtender.java
 	
-	v0.1
+	v0.2
 	
-	Small Burp Suite Extension to allow the user to view/add/modify/remove JVM System Properties during runtime. May be helpful to some for the purpose 
-	of viewing preset property values or setting options for other extensions during runtime rather than on the command line. This extension can be used 
-	with both the Free and Professional versions of Burp Suite.
+	Small Burp Suite (Free or Professional) Extension to allow the user to view/add/modify/delete JVM System Properties during Burp usage. May be helpful to some 
+	for the purpose of viewing preset property values or setting options for other extensions during runtime rather than on the command line.
 */
 
 package burp;
@@ -15,6 +14,9 @@ import java.util.Set;
 import java.util.Arrays;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JPanel;
@@ -35,7 +37,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 	private DefaultTableModel dtm;
 	private JLabel statusBar;
 	
-	private static final String version = "v0.1";
+	private static final String version = "v0.2";
 	
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks cb) {
 		callbacks = cb;
@@ -44,16 +46,17 @@ public class BurpExtender implements IBurpExtender,ITab {
 		
 		component = new JPanel();
 		
-		JPanel buttonPanel = new JPanel(new GridLayout(4,1));
+		JPanel buttonPanel = new JPanel(new GridLayout(5,1));
 		JButton refButton = new JButton("Refresh Properties");
-		JButton delButton = new JButton("Delete Property");
+		JButton delButton = new JButton("Delete Selected Property");
+		JButton copyButton = new JButton("Copy Selected Property Value");
 		JButton addButton = new JButton("Add Property");
 		statusBar = new JLabel("");
 		ActionListener buttonAL = new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				JButton b = (JButton) ae.getSource();
 				switch(b.getText()) {
-					case "Delete Property":
+					case "Delete Selected Property":
 						int[] selected = table.getSelectedRows();
 						for(int i=selected.length-1;i>-1;i--) {
 							String val = (String) table.getValueAt(selected[i],0);
@@ -77,6 +80,17 @@ public class BurpExtender implements IBurpExtender,ITab {
 										break;
 									}
 								}
+							}
+						}
+						break;
+					case "Copy Selected Property Value":
+						if(table.getSelectedRowCount() == 1) {
+							String val = (String) table.getValueAt(table.getSelectedRow(),0);
+							if(!val.isEmpty()) {
+								Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+								StringSelection ss = new StringSelection((String) table.getValueAt(table.getSelectedRow(),1));
+								cb.setContents(ss,ss);
+								statusBar.setText("<html><font color='orange'>Property "+val+" value copied to clipboard.</font></html>");
 							}
 						}
 						break;
@@ -109,9 +123,11 @@ public class BurpExtender implements IBurpExtender,ITab {
 		};
 		refButton.addActionListener(buttonAL);
 		delButton.addActionListener(buttonAL);
+		copyButton.addActionListener(buttonAL);
 		addButton.addActionListener(buttonAL);
 		buttonPanel.add(refButton);
 		buttonPanel.add(delButton);
+		buttonPanel.add(copyButton);
 		buttonPanel.add(addButton);
 		buttonPanel.add(statusBar);
 		
