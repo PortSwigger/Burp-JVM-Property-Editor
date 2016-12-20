@@ -1,4 +1,6 @@
 # Burp JVM Property Editor
+![Figure 1-1](extender-snapshot.png?raw=true "")
+
 Small Burp Suite (Free or Professional) Extension to allow the user to view, add, modify, delete or copy the value of JVM System Properties (https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html) during Burp usage. May be helpful to some for the purpose of viewing preset property values or setting options for other extensions during runtime rather than on the command line.
 
 # Usage
