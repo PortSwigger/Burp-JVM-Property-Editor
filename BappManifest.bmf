@@ -6,6 +6,6 @@ SerialVersion: 0
 MinPlatformVersion: 0
 ProOnly: False
 Author: Jeffrey Cap
-ShortDescription: Allow the user to view/add/modify/delete JVM System Properties during Burp usage
+ShortDescription: Allows viewing and editing of JVM system properties.
 EntryPoint: build/libs/jvm-property-editor-all.jar
 BuildCommand: gradle -PburpJar=$BURP_JAR fatJar
