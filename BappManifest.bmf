@@ -1,6 +1,7 @@
 Uuid: 150c653f60b54b4eb556ca289a6aa800
 ExtensionType: 1
 Name: JVM Property Editor
+RepoName: jvm-property-editor
 ScreenVersion: 0.2
 SerialVersion: 1
 MinPlatformVersion: 0
