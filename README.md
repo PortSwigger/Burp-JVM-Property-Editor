@@ -4,7 +4,7 @@
 Small Burp Suite (Free or Professional) Extension to allow the user to view, add, modify, delete or copy the value of JVM System Properties (https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html) during Burp usage. May be helpful to some for the purpose of viewing preset property values or setting options for other extensions during runtime rather than on the command line.
 
 # Usage
-1. Load the burp-jvm-property-editor-[VERSION].jar file in the Burp Suite "Extensions" tab.
+1. Load the burp-jvm-property-editor-[VERSION].jar file in the Burp Suite "Extender" tab.
 2. Navigate to the new "JVM Property Editor" tab and view the table of currently-accessible JVM Property Values.
   * The table is populated when the extension is loaded and is NOT updated in real time. Press the "Refresh Properties" button to repopulate the table with all the current property keys and values (this is recommended before attempting to add/remove/edit properties).
 3. To add a new Property:
@@ -28,7 +28,7 @@ Requires Java Development Kit 7 or higher and Burp Suite jar file (Free or Profe
 2. Open a terminal and navigate to the directory containing the Burp-JVM-Property-Editor directory
 3. Create a directory called build in order to store the generated Java .class files
 4. Issue the following command to compile the extension: javac -cp [PATH_TO_BURP_JAR] -d build Burp-JVM-Property-Editor/burp/BurpExtender.java
-5. Issue the following command to create the extension jar file (named burp-jvm-property-editor.jar): jar -vcf burp-jvm-property-editor.jar -C build .
+5. Issue the following command to create the extension jar file (including the trailing period; named burp-jvm-property-editor.jar): jar -vcf burp-jvm-property-editor.jar -C build .
 
 
 Copyright (C) 2016 Jeff Cap (Bort_Millipede)
