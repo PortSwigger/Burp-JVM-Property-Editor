@@ -4,7 +4,7 @@
 Small Burp Suite (Free or Professional) Extension to allow the user to view, add, modify, delete or copy the value of [JVM System Properties](https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html) during Burp usage. May be helpful to some for the purpose of viewing preset property values or setting options for other extensions during runtime rather than on the command line.
 
 # Usage
-1. Load the Burp-JVM-Property-Editor-[VERSION]-all.jar file in the Burp Suite "Extender" tab, or install through the BApp Store.
+1. Load the Burp-JVM-Property-Editor-all-[VERSION].jar file in the Burp Suite "Extender" tab, or install through the BApp Store.
 2. Navigate to the new "JVM Property Editor" tab and view the table of currently-accessible JVM Property Values.
 
 * The table is populated when the extension is loaded, and is NOT updated in real time. Press the "Refresh Properties" button to re-populate the table with all the current property names and values (this is recommended before attempting to add/remove/edit properties).
@@ -27,7 +27,7 @@ Requires Java Development Kit 8 or higher, and Gradle 4 or higher.
 
 1. Clone the Burp-JVM-Property-Editor repository.
 2. Open a terminal and navigate to the directory containing the Burp-JVM-Property-Editor directory.
-3. Issue the following command to compile the extension and create the extension jar file (named Burp-JVM-Property-Editor-[VERSION]-all.jar): ```gradle fatJar```
+3. Issue the following command to compile the extension and create the extension jar file (named Burp-JVM-Property-Editor-all-[VERSION].jar): ```gradle fatJar```
 
 # Copyright
 Copyright (C) 2016, 2019 Jeffrey Cap (Bort_Millipede)
