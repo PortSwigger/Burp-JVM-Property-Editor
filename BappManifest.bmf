@@ -8,5 +8,5 @@ MinPlatformVersion: 0
 ProOnly: False
 Author: Jeffrey Cap (Bort_Millipede)
 ShortDescription: Allows viewing and editing of JVM system properties.
-EntryPoint: build/libs/jvm-property-editor-all.jar
+EntryPoint: build/libs/jvm-property-editor-all-0.3.jar
 BuildCommand: gradle fatJar
