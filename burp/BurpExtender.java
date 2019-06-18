@@ -1,7 +1,7 @@
 /*
 	BurpExtender.java
 	
-	v0.2
+	v0.3 (5/19/2019)
 	
 	Small Burp Suite (Free or Professional) Extension to allow the user to view/add/modify/delete JVM System Properties during Burp usage. May be helpful to some 
 	for the purpose of viewing preset property values or setting options for other extensions during runtime rather than on the command line.
@@ -37,7 +37,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 	private DefaultTableModel dtm;
 	private JLabel statusBar;
 	
-	private static final String version = "v0.2";
+	private static final String version = "v0.3";
 	
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks cb) {
 		callbacks = cb;
@@ -46,10 +46,11 @@ public class BurpExtender implements IBurpExtender,ITab {
 		
 		component = new JPanel();
 		
-		JPanel buttonPanel = new JPanel(new GridLayout(5,1));
+		JPanel buttonPanel = new JPanel(new GridLayout(6,1));
 		JButton refButton = new JButton("Refresh Properties");
 		JButton delButton = new JButton("Delete Selected Property");
-		JButton copyButton = new JButton("Copy Selected Property Value");
+		JButton copyNameButton = new JButton("Copy Selected Property Name");
+		JButton copyValueButton = new JButton("Copy Selected Property Value");
 		JButton addButton = new JButton("Add Property");
 		statusBar = new JLabel("");
 		ActionListener buttonAL = new ActionListener() {
@@ -66,10 +67,15 @@ public class BurpExtender implements IBurpExtender,ITab {
 							} else {
 								int choice = JOptionPane.showConfirmDialog(null,"Are you sure you want to delete JVM Property "+val+"?","Confirm Property Deletion",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
 								if(choice==JOptionPane.YES_OPTION) {
-									System.clearProperty(val);
-									callbacks.printOutput("Property "+val+" removed.");
-									statusBar.setText("<html><font color='orange'>Property "+val+" removed.</font></html>");
-									remove = true;
+									try {
+										System.clearProperty(val);
+										callbacks.printOutput("Property "+val+" removed.");
+										statusBar.setText("<html><font color='orange'>Property "+val+" removed.</font></html>");
+										remove = true;
+									} catch(SecurityException se) {
+										callbacks.printError("Removing Property "+val+" halted by SecurityManager!");
+										statusBar.setText("<html><font color='orange'>Removing Property "+val+" halted by SecurityManager!</font></html>");
+									}
 								}
 							}
 							if(remove) {
@@ -83,15 +89,38 @@ public class BurpExtender implements IBurpExtender,ITab {
 							}
 						}
 						break;
+					case "Copy Selected Property Name":
+						if(table.getSelectedRowCount() == 1) {
+							String name = (String) table.getValueAt(table.getSelectedRow(),0);
+							if(!name.isEmpty()) {
+								Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+								StringSelection ss = new StringSelection(name);
+								cb.setContents(ss,ss);
+								callbacks.printOutput("Property "+name+" name copied to clipboard.");
+								statusBar.setText("<html><font color='orange'>Property "+name+" name copied to clipboard.</font></html>");
+							}
+						} else {
+							callbacks.printOutput("Select only one row to copy property name to clipboard!");
+							statusBar.setText("<html><font color='orange'>Select only one row to copy property name to clipboard!</font></html>");
+						}
+						break;
 					case "Copy Selected Property Value":
 						if(table.getSelectedRowCount() == 1) {
-							String val = (String) table.getValueAt(table.getSelectedRow(),0);
+							String name = (String) table.getValueAt(table.getSelectedRow(),0);
+							String val = (String) table.getValueAt(table.getSelectedRow(),1);
 							if(!val.isEmpty()) {
 								Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
-								StringSelection ss = new StringSelection((String) table.getValueAt(table.getSelectedRow(),1));
+								StringSelection ss = new StringSelection(val);
 								cb.setContents(ss,ss);
-								statusBar.setText("<html><font color='orange'>Property "+val+" value copied to clipboard.</font></html>");
+								callbacks.printOutput("Property "+name+" value copied to clipboard.");
+								statusBar.setText("<html><font color='orange'>Property "+name+" value copied to clipboard.</font></html>");
+							} else {
+								callbacks.printOutput("Property "+name+" value is empty!");
+								statusBar.setText("<html><font color='orange'>Property "+name+" value is empty!</font></html>");
 							}
+						} else {
+							callbacks.printOutput("Select only one row to copy property value to clipboard!");
+							statusBar.setText("<html><font color='orange'>Select only one row to copy property value to clipboard!</font></html>");
 						}
 						break;
 					case "Add Property":
@@ -123,18 +152,20 @@ public class BurpExtender implements IBurpExtender,ITab {
 		};
 		refButton.addActionListener(buttonAL);
 		delButton.addActionListener(buttonAL);
-		copyButton.addActionListener(buttonAL);
+		copyNameButton.addActionListener(buttonAL);
+		copyValueButton.addActionListener(buttonAL);
 		addButton.addActionListener(buttonAL);
 		buttonPanel.add(refButton);
 		buttonPanel.add(delButton);
-		buttonPanel.add(copyButton);
+		buttonPanel.add(copyNameButton);
+		buttonPanel.add(copyValueButton);
 		buttonPanel.add(addButton);
 		buttonPanel.add(statusBar);
 		
 		dtm = new DefaultTableModel(0,2) {
 			public String getColumnName(int column) {
 				switch(column) {
-					case 0: return "Property Key";
+					case 0: return "Property Name";
 					case 1: return "Property Value";
 					default: return "";
 				}
@@ -204,10 +235,11 @@ public class BurpExtender implements IBurpExtender,ITab {
 										System.setProperty(propName,propValue);
 										dtm.setValueAt(System.getProperty(propName),lastRow,1);
 										callbacks.printOutput("Property "+propName+" value "+(origValue!=null ? "changed from \'"+origValue+"\' " : "set ")+"to \'"+propValue+"\'.");
-									} catch(SecurityException e) {
+										statusBar.setText("<html><font color='orange'>Property "+propName+" value "+(origValue!=null ? "changed from \'"+origValue+"\' " : "set ")+"to \'"+propValue+"\'.</font></html>");
+									} catch(SecurityException se) {
 										dtm.setValueAt(origValue,lastRow,1);
-										callbacks.printError("Change to value for Property "+propName+" halted by SecurityManager!");
-										statusBar.setText("<html><font color='orange'>Change to value for Property "+propName+" halted by SecurityManager!</font></html>");
+										callbacks.printError("Changing value for Property "+propName+" halted by SecurityManager!");
+										statusBar.setText("<html><font color='orange'>Changing value for Property "+propName+" halted by SecurityManager!</font></html>");
 									}
 								}
 							}
@@ -227,8 +259,6 @@ public class BurpExtender implements IBurpExtender,ITab {
 		
 		component.add(buttonPanel);
 		component.add(scroll);
-		callbacks.customizeUiComponent(component);		
-		
 		callbacks.addSuiteTab(this);
 	}
 	
@@ -237,7 +267,9 @@ public class BurpExtender implements IBurpExtender,ITab {
 	}
 	
 	public Component getUiComponent() {
-		return new JScrollPane(component);
+		JScrollPane jsp = new JScrollPane(component);
+		callbacks.customizeUiComponent(jsp);
+		return jsp;
 	}
 	
 	private void populateTable() {
